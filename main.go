@@ -1,4 +1,4 @@
-package main
+package cda
 
 import (
 "fmt"
@@ -95,8 +95,4 @@ func (market *DecimalPriceCdaMarket) AddOrder(price decimal.Decimal, volume int,
 
 func (market *DecimalPriceCdaMarket) Execution(){
 	// ToDo To be implemented
-}
-
-func main() {
-	
 }
