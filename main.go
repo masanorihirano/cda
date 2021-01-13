@@ -97,4 +97,6 @@ func (market *DecimalPriceCdaMarket) Execution(){
 	// ToDo To be implemented
 }
 
-
+func main() {
+	
+}
