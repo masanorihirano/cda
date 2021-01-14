@@ -8,69 +8,76 @@ import (
 
 type DecimalPriceOrderBook struct {
 	isSell         bool
-	priceVolumeMap map[decimal.Decimal]int
+	priceVolumeMap map[float64]int
 }
 
 func NewDecimalPriceOrderBook(isSell bool) *DecimalPriceOrderBook {
 	return &DecimalPriceOrderBook{
 		isSell:         isSell,
-		priceVolumeMap: make(map[decimal.Decimal]int),
+		priceVolumeMap: make(map[float64]int),
 	}
 }
 
 func (book *DecimalPriceOrderBook) Add(price decimal.Decimal, volume int) {
-	if v, ok := book.priceVolumeMap[price]; ok {
-		v += volume
-		if v == 0 {
-			delete(book.priceVolumeMap, price)
+	priceFloat, _ := price.Float64()
+	if _, ok := book.priceVolumeMap[priceFloat]; ok {
+		book.priceVolumeMap[priceFloat] += volume
+		if book.priceVolumeMap[priceFloat] == 0 {
+			delete(book.priceVolumeMap, priceFloat)
 		}
 	} else {
-		book.priceVolumeMap[price] = volume
+		book.priceVolumeMap[priceFloat] = volume
 	}
 }
-
-type DecimalSlice []decimal.Decimal
-
-func (p DecimalSlice) Len() int           { return len(p) }
-func (p DecimalSlice) Less(i, j int) bool { return p[i].LessThan(p[j]) }
-func (p DecimalSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+//
+//type DecimalSlice []decimal.Decimal
+//
+//func (p DecimalSlice) Len() int           { return len(p) }
+//func (p DecimalSlice) Less(i, j int) bool { return p[i].LessThan(p[j]) }
+//func (p DecimalSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
 func (book *DecimalPriceOrderBook) String() string {
 	result := "{"
-	indexes := make(DecimalSlice, 0)
+	indexes := make([]float64, 0)
 	for price, volume := range book.priceVolumeMap {
-		if price.Equal(decimal.New(0, 0)) {
-			result += fmt.Sprintf("%s:%d,", price, volume)
+		if price == 0 {
+			result += fmt.Sprintf("%s:%d,", decimal.NewFromFloat(price), volume)
 		} else {
 			indexes = append(indexes, price)
 		}
 	}
 	if book.isSell {
-		sort.Sort(indexes)
+		sort.Float64s(indexes)
 	} else {
-		sort.Sort(sort.Reverse(indexes))
+		sort.Sort(sort.Reverse(sort.Float64Slice(indexes)))
 	}
 	for _, key := range indexes {
-		result += fmt.Sprintf("%s:%d,", key, book.priceVolumeMap[key])
+		result += fmt.Sprintf("%s:%d,", decimal.NewFromFloat(key), book.priceVolumeMap[key])
 	}
-	return result[:len(result)-1] + "}"
+	if len(book.priceVolumeMap) > 0 {
+		result = result[:len(result)-1]
+	}
+	return  result + "}"
 }
 
 func (book *DecimalPriceOrderBook) GetBestOrder() (decimal.Decimal, int) {
-	indexes := make(DecimalSlice, 0)
+	if len(book.priceVolumeMap) == 0 {
+		return decimal.Zero, 0
+	}
+	indexes := make([]float64, 0)
 	for price, volume := range book.priceVolumeMap {
-		if price.Equal(decimal.New(0, 0)) {
-			return price, volume
+		if price == 0 {
+			return decimal.NewFromFloat(price), volume
 		} else {
 			indexes = append(indexes, price)
 		}
 	}
 	if book.isSell {
-		sort.Sort(indexes)
+		sort.Float64s(indexes)
 	} else {
-		sort.Sort(sort.Reverse(indexes))
+		sort.Sort(sort.Reverse(sort.Float64Slice(indexes)))
 	}
-	return indexes[0], book.priceVolumeMap[indexes[0]]
+	return decimal.NewFromFloat(indexes[0]), book.priceVolumeMap[indexes[0]]
 }
 
 type DecimalPriceCdaMarket struct {
