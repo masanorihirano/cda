@@ -19,6 +19,9 @@ func NewDecimalPriceOrderBook(isSell bool) *DecimalPriceOrderBook {
 }
 
 func (book *DecimalPriceOrderBook) Add(price decimal.Decimal, volume int) {
+	if volume == 0{
+		return
+	}
 	priceFloat, _ := price.Float64()
 	if _, ok := book.priceVolumeMap[priceFloat]; ok {
 		book.priceVolumeMap[priceFloat] += volume
