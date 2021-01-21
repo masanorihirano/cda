@@ -50,11 +50,11 @@ func TestDecimalPriceOrderBook(t *testing.T) {
 
 	sellString := sellOrderBook.String()
 	buyString := buyOrderBook.String()
-	if sellString != "{'0':200,'100':100,'200':100}"{
-		t.Errorf("Error 9: expected: %s, got %s", "{'0':200,'100':100,'200':100}", sellString)
+	if sellString != "{\"0\":200,\"100\":100,\"200\":100}"{
+		t.Errorf("Error 9: expected: %s, got %s", "{\"0\":200,\"100\":100,\"200\":100}", sellString)
 	}
-	if buyString != "{'0':200,'200':100,'100':200}"{
-		t.Errorf("Error 10: expected: %s, got %s", "{'0':200,'200':100,'100':100}", sellString)
+	if buyString != "{\"0\":200,\"200\":100,\"100\":200}"{
+		t.Errorf("Error 10: expected: %s, got %s", "{\"0\":200,\"200\":100,\"100\":100}", sellString)
 	}
 
 	sellOrderBook.Add(decimal.Zero, -200)
@@ -114,8 +114,8 @@ func TestDecimalPriceOrderBook(t *testing.T) {
 	if sellString != "{}"{
 		t.Errorf("Error 9: expected: %s, got %s", "{}", sellString)
 	}
-	if buyString != "{'100':100}"{
-		t.Errorf("Error 10: expected: %s, got %s", "{'100':100}", sellString)
+	if buyString != "{\"100\":100}"{
+		t.Errorf("Error 10: expected: %s, got %s", "{\"100\":100}", sellString)
 	}
 
 }

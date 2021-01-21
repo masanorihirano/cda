@@ -44,7 +44,7 @@ func (book *DecimalPriceOrderBook) String() string {
 	indexes := make([]float64, 0)
 	for price, volume := range book.priceVolumeMap {
 		if price == 0 {
-			result += fmt.Sprintf("'%s':%d,", decimal.NewFromFloat(price), volume)
+			result += fmt.Sprintf("\"%s\":%d,", decimal.NewFromFloat(price), volume)
 		} else {
 			indexes = append(indexes, price)
 		}
@@ -55,7 +55,7 @@ func (book *DecimalPriceOrderBook) String() string {
 		sort.Sort(sort.Reverse(sort.Float64Slice(indexes)))
 	}
 	for _, key := range indexes {
-		result += fmt.Sprintf("'%s':%d,", decimal.NewFromFloat(key), book.priceVolumeMap[key])
+		result += fmt.Sprintf("\"%s\":%d,", decimal.NewFromFloat(key), book.priceVolumeMap[key])
 	}
 	if len(book.priceVolumeMap) > 0 {
 		result = result[:len(result)-1]
